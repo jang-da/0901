@@ -34,3 +34,16 @@ canvas {
 #info-text.fade-out {
     opacity: 0;
 }
+
+/* 속도 정보 스타일 */
+#speed-info {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    pointer-events: none;
+}

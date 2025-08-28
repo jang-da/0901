@@ -100,12 +100,14 @@ class SimplexNoise {
 const canvas = document.getElementById('noise-canvas');
 const ctx = canvas.getContext('2d');
 const infoText = document.getElementById('info-text');
+const speedInfo = document.getElementById('speed-info');
 
 const PARTICLE_COUNT = 2000;
 const PARTICLE_RADIUS = 1;
 const NOISE_SCALE = 0.005; // 노이즈 필드의 스케일 (값이 작을수록 부드러운 패턴)
-const PARTICLE_SPEED = 2; // 파티클 이동 속도
+const FADE_DISTANCE = 50; // 파티클이 사라지기 시작하는 경계선과의 거리
 
+let particleSpeed = 2; // 파티클 이동 속도
 let particles = [];
 let simplex = new SimplexNoise();
 let hue = 0; // 색상(hue) 값
@@ -132,17 +134,29 @@ class Particle {
      */
     update() {
         const angle = simplex.noise2D(this.x * NOISE_SCALE, this.y * NOISE_SCALE) * Math.PI * 2;
-        this.x += Math.cos(angle) * PARTICLE_SPEED;
-        this.y += Math.sin(angle) * PARTICLE_SPEED;
+        this.x += Math.cos(angle) * particleSpeed;
+        this.y += Math.sin(angle) * particleSpeed;
         this.edges();
     }
 
     /**
      * 현재 위치에 파티클을 그립니다.
-     * HSL 색상 모델과 현재 hue 값을 사용하여 색상을 지정합니다.
+     * HSL 색상 모델과 현재 hue 값을 사용하고, 경계선 근처에서 투명도를 조절합니다.
      */
     draw() {
-        ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
+        let opacity = 1;
+        const distToLeft = this.x;
+        const distToRight = canvas.width - this.x;
+        const distToTop = this.y;
+        const distToBottom = canvas.height - this.y;
+
+        const minDist = Math.min(distToLeft, distToRight, distToTop, distToBottom);
+
+        if (minDist < FADE_DISTANCE) {
+            opacity = minDist / FADE_DISTANCE;
+        }
+
+        ctx.fillStyle = `hsla(${hue}, 100%, 50%, ${opacity})`;
         ctx.beginPath();
         ctx.arc(this.x, this.y, PARTICLE_RADIUS, 0, Math.PI * 2);
         ctx.fill();
@@ -225,10 +239,32 @@ function showInfoText() {
 
 // --- 초기화 및 이벤트 리스너 설정 ---
 
+/**
+ * 속도 정보 표시를 업데이트합니다.
+ */
+function updateSpeedInfo() {
+    speedInfo.textContent = `속도: ${particleSpeed.toFixed(1)}`;
+}
+
+/**
+ * 키보드 입력 이벤트를 처리하여 속도를 조절합니다.
+ * @param {KeyboardEvent} e
+ */
+function handleKeyDown(e) {
+    if (e.key === 'ArrowUp') {
+        particleSpeed += 0.1;
+    } else if (e.key === 'ArrowDown') {
+        particleSpeed = Math.max(0, particleSpeed - 0.1);
+    }
+    updateSpeedInfo();
+}
+
 // 창 크기가 변경될 때마다 캔버스를 다시 설정합니다.
 window.addEventListener('resize', setup);
 // 클릭 이벤트를 감지하여 애니메이션을 토글합니다.
 window.addEventListener('click', toggleAnimation);
+// 키보드 입력을 감지하여 속도를 조절합니다.
+window.addEventListener('keydown', handleKeyDown);
 
 // 초기 설정 함수를 호출합니다.
 setup();
@@ -236,3 +272,5 @@ setup();
 animate();
 // 초기 안내 문구를 표시합니다.
 showInfoText();
+// 초기 속도 정보를 표시합니다.
+updateSpeedInfo();
