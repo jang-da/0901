@@ -100,14 +100,17 @@ class SimplexNoise {
 const canvas = document.getElementById('noise-canvas');
 const ctx = canvas.getContext('2d');
 const infoText = document.getElementById('info-text');
-const speedInfo = document.getElementById('speed-info');
+const speedToggleBtn = document.getElementById('speed-toggle-btn');
 
 const PARTICLE_COUNT = 2000;
 const PARTICLE_RADIUS = 1;
 const NOISE_SCALE = 0.005; // 노이즈 필드의 스케일 (값이 작을수록 부드러운 패턴)
 const FADE_DISTANCE = 50; // 파티클이 사라지기 시작하는 경계선과의 거리
+const BASE_SPEED = 2.0;
+const SPEED_LEVELS = [1, 2, 0.5]; // 배속 수준
 
-let particleSpeed = 2; // 파티클 이동 속도
+let currentSpeedIndex = 0;
+let particleSpeed = BASE_SPEED * SPEED_LEVELS[currentSpeedIndex]; // 파티클 이동 속도
 let particles = [];
 let simplex = new SimplexNoise();
 let hue = 0; // 색상(hue) 값
@@ -240,31 +243,21 @@ function showInfoText() {
 // --- 초기화 및 이벤트 리스너 설정 ---
 
 /**
- * 속도 정보 표시를 업데이트합니다.
+ * 속도 조절 버튼의 텍스트를 업데이트하고, 실제 파티클 속도를 변경합니다.
  */
-function updateSpeedInfo() {
-    speedInfo.textContent = `속도: ${particleSpeed.toFixed(1)}`;
-}
-
-/**
- * 키보드 입력 이벤트를 처리하여 속도를 조절합니다.
- * @param {KeyboardEvent} e
- */
-function handleKeyDown(e) {
-    if (e.key === 'ArrowUp') {
-        particleSpeed += 0.1;
-    } else if (e.key === 'ArrowDown') {
-        particleSpeed = Math.max(0, particleSpeed - 0.1);
-    }
-    updateSpeedInfo();
+function toggleSpeed() {
+    currentSpeedIndex = (currentSpeedIndex + 1) % SPEED_LEVELS.length;
+    const newMultiplier = SPEED_LEVELS[currentSpeedIndex];
+    particleSpeed = BASE_SPEED * newMultiplier;
+    speedToggleBtn.textContent = `속도: ${newMultiplier}x`;
 }
 
 // 창 크기가 변경될 때마다 캔버스를 다시 설정합니다.
 window.addEventListener('resize', setup);
 // 클릭 이벤트를 감지하여 애니메이션을 토글합니다.
-window.addEventListener('click', toggleAnimation);
-// 키보드 입력을 감지하여 속도를 조절합니다.
-window.addEventListener('keydown', handleKeyDown);
+canvas.addEventListener('click', toggleAnimation); // 버튼 클릭이 토글에 영향 안 주도록 캔버스에만 적용
+// 속도 조절 버튼에 클릭 이벤트를 추가합니다.
+speedToggleBtn.addEventListener('click', toggleSpeed);
 
 // 초기 설정 함수를 호출합니다.
 setup();
@@ -272,5 +265,3 @@ setup();
 animate();
 // 초기 안내 문구를 표시합니다.
 showInfoText();
-// 초기 속도 정보를 표시합니다.
-updateSpeedInfo();

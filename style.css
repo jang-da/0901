@@ -35,15 +35,21 @@ canvas {
     opacity: 0;
 }
 
-/* 속도 정보 스타일 */
-#speed-info {
+/* 속도 조절 버튼 스타일 */
+#speed-toggle-btn {
     position: absolute;
     bottom: 20px;
-    left: 20px;
+    right: 20px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.5);
     color: white;
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 10px 15px;
+    padding: 10px 20px;
     border-radius: 5px;
+    cursor: pointer;
     font-size: 14px;
-    pointer-events: none;
+    transition: background-color 0.2s;
+}
+
+#speed-toggle-btn:hover {
+    background-color: rgba(255, 255, 255, 0.3);
 }
