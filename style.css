@@ -18,6 +18,7 @@ canvas {
 /* 안내 문구 스타일 */
 #info-text {
     position: absolute;
+    z-index: 1;
     top: 20px;
     left: 50%;
     transform: translateX(-50%);
@@ -38,6 +39,7 @@ canvas {
 /* 속도 조절 버튼 스타일 */
 #speed-toggle-btn {
     position: absolute;
+    z-index: 1;
     bottom: 20px;
     right: 20px;
     background-color: rgba(255, 255, 255, 0.2);
