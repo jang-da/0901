@@ -1,0 +1,36 @@
+/* 기본 스타일 초기화 */
+body, html {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #000000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* 캔버스 스타일 */
+canvas {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* 안내 문구 스타일 */
+#info-text {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px 20px;
+    border-radius: 5px;
+    pointer-events: none; /* 텍스트 위로 클릭 이벤트가 전달되도록 설정 */
+    opacity: 1;
+    transition: opacity 1s ease-in-out;
+}
+
+/* 텍스트 사라지는 효과를 위한 클래스 */
+#info-text.fade-out {
+    opacity: 0;
+}
